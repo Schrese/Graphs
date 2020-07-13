@@ -39,6 +39,27 @@ class Graph:
         beginning from starting_vertex.
         """
         pass  # TODO
+        # Create a queue to know what we are traversing next
+        q = Queue()
+        # Hold the visited vertices in a set
+        visited = set()
+        # Instantiate the queue with the starting_vertex
+        q.enqueue(starting_vertex)
+        # While there are still items in the queue
+        while q.size() > 0:
+            # dequeue the first item in the queue
+            v = q.dequeue()
+            # loop through the neighbors 
+            if v not in visited:
+                # Remove the vertex from the queue and add it to "visited"
+                visited.add(v)
+
+                print(v)
+
+                # add each vertex's neighbor to the queue
+                for next_vertex in self.get_neighbors(v):
+                    q.enqueue(next_vertex)
+
 
     def dft(self, starting_vertex):
         """
@@ -126,7 +147,7 @@ if __name__ == '__main__':
         1, 2, 4, 3, 7, 6, 5
         1, 2, 4, 3, 7, 5, 6
     '''
-    # graph.bft(1)
+    graph.bft(1)
 
     '''
     Valid DFT paths:

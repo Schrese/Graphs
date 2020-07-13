@@ -7,7 +7,7 @@ This is a multi-stage project to implement a basic graph class and traversals.
 [x] add_vertex()
 [x] add_edge()
 [x] get_neighbors()
-[ ] bft()
+[x] bft()
 [ ] dft()
 [ ] dft_recursive()
 [ ] bfs()
