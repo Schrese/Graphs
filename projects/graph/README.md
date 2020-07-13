@@ -8,7 +8,7 @@ This is a multi-stage project to implement a basic graph class and traversals.
 [x] add_edge()
 [x] get_neighbors()
 [x] bft()
-[ ] dft()
+[x] dft()
 [ ] dft_recursive()
 [ ] bfs()
 [ ] dfs()
