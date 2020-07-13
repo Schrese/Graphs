@@ -94,7 +94,28 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        # pass  # TODO 
+        # get the neighbors
+        # visited = starting_vertex
+        # print(n)
+        # create set for visited vertices
+        visited = set()
+        # print(visited)
+        def inner_function(starting_vertex):
+            # Base case is when there isn't a "next_neighbor" AND the vertex has been visited yet
+            # print(visited, 'aosidjf;oaije;ofijao;fij')
+            if starting_vertex not in visited:
+                visited.add(starting_vertex)
+                n = self.get_neighbors(starting_vertex)
+                # print(n, len(n), 'again')
+                # n = list(n)
+                print(starting_vertex)
+                for next_neighbor in n:
+                    # call the function on all of the neighbors
+                    inner_function(next_neighbor)
+        return inner_function(starting_vertex)
+        
+                
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -149,7 +170,7 @@ if __name__ == '__main__':
         {1: {2}, 2: {3, 4}, 3: {5}, 4: {6, 7}, 5: {3}, 6: {3}, 7: {1, 6}}
     '''
     print(graph.vertices)
-    print(graph.get_neighbors(4)) # Tests that getNeighbors works
+    # print(graph.get_neighbors(4)) # Tests that getNeighbors works
 
     '''
     Valid BFT paths:
@@ -166,7 +187,7 @@ if __name__ == '__main__':
         1, 2, 4, 3, 7, 6, 5
         1, 2, 4, 3, 7, 5, 6
     '''
-    graph.bft(1)
+    # graph.bft(1)
 
     '''
     Valid DFT paths:
@@ -175,8 +196,8 @@ if __name__ == '__main__':
         1, 2, 4, 7, 6, 3, 5
         1, 2, 4, 6, 3, 5, 7
     '''
-    graph.dft(1)
-    # graph.dft_recursive(1)
+    # graph.dft(1)
+    graph.dft_recursive(1)
 
     '''
     Valid BFS path:
