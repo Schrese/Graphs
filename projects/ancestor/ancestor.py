@@ -20,16 +20,17 @@ def earliest_ancestor(ancestors, starting_node):
     if len(g.get_neighbors(starting_node)) < 1:
         return -1
 
+    highest_path = []
+
     while q.size() > 0:
+        print(highest_path, 'highest')
         path = q.dequeue()
         # print(path)
         v = path[-1]
-        print(path)
+        print(path, 'path')
 
-        if v not in visited:
-            visited.add(v)
-
-
+        # if v not in visited: # Don't think I need this since this graph only goes one-way
+        #     visited.add(v)
 
         # for i, child in ancestors:
         #     print(child, i)
@@ -37,7 +38,10 @@ def earliest_ancestor(ancestors, starting_node):
             path_copy = list(path)
             path_copy.append(parent)
             q.enqueue(path_copy)
-            
+            if len(path_copy) > len(path):
+                print(len(path))
+                highest_path.append(path_copy[-1])
+    return highest_path[-1]
 
 
 # def get_parents(child_id):
