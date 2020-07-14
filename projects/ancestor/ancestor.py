@@ -17,13 +17,19 @@ def earliest_ancestor(ancestors, starting_node):
     q = Queue()    
     q.enqueue([starting_node])
 
+    if len(g.get_neighbors(starting_node)) < 1:
+        return -1
+
     while q.size() > 0:
         path = q.dequeue()
         # print(path)
         v = path[-1]
         print(path)
+
         if v not in visited:
             visited.add(v)
+
+
 
         # for i, child in ancestors:
         #     print(child, i)
