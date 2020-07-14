@@ -238,20 +238,21 @@ class Graph:
         """
         # pass  # TODO
         visited = set()
-        path = []
+        # path = []
         # print(starting_vertex)
-        def inner_function(starting, destination):
+        def inner_function(starting, destination, path=None):
             # Base case is when there isn't a 'next_neighbor' (meaning everything has been visited) or the destination is reached
-            # path = []
+            if path == None:
+                path = []
             if starting not in visited: 
-                # path = path + [starting]
                 visited.add(starting)
-                path.append(starting)
+                # path.append(starting)
+                path = path + [starting]
                 if starting == destination:
                     return path
 
                 for next_vert in self.get_neighbors(starting):
-                    new_path = inner_function(next_vert, destination)
+                    new_path = inner_function(next_vert, destination, path)
                     print(new_path, starting, 'new path')
                     if new_path:
                         return new_path
