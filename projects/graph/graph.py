@@ -38,7 +38,7 @@ class Graph:
         Print each vertex in breadth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        # pass  # TODO
         # Create a queue to know what we are traversing next
         q = Queue()
         # Hold the visited vertices in a set
@@ -157,10 +157,10 @@ class Graph:
     #                 print(path, 'another path')
 
     # Seems like I was confused about the "path" wording as well as the whole "making a copy of the path". I didn't realize that we weren't checking individual vertices, but rather a list of the path thus far. 
-    def bfs(self, starting_vertex_id, target_vertex_id):
+    def bfs(self, starting_vertex, target_vertex):
         # Create an empty queue and enque A PATH TO the starting vertex ID
         q = Queue()
-        q.enqueue([starting_vertex_id])
+        q.enqueue([starting_vertex])
         # Create a Set to store visited vertices
         visited = set()
         # While the queue is not empty...
@@ -172,7 +172,7 @@ class Graph:
             # If that vertex has not been visited...
             if v not in visited:
                 # CHECK IF IT'S THE TARGET
-                if v == target_vertex_id:
+                if v == target_vertex:
                     # IF SO, RETURN PATH
                     return path
                 # Mark it as visited...
@@ -193,7 +193,40 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
-        pass  # TODO
+        # pass  # TODO
+        # Create a stack to know what we are traversing next
+        s = Stack()
+        # Add starting-vertex to the stack
+        s.push([starting_vertex])
+        # Hold the visited vertices in a set
+        visited = set()
+
+        # While the stack is not empty:
+        while s.size() > 0:
+            # pop off the stack and set to a variable
+            path = s.pop()
+            # grab the last vertex from the path (does this need to change since it's a stack and not a queue...?)
+            v = path[-1]
+
+            # If that vertex has not been visited...
+            if v not in visited:
+                # check if it's the destination_vertex
+                if v == destination_vertex:
+                    # If so, return the path
+                    return path
+                
+                # mark this vertex as visited
+                visited.add(v)
+                # add a path the the vertex's neighbor to the "top" of the Stack
+                for next_vert in self.get_neighbors(v):
+                    # copy the path so that I can manipulate it without mutating the original
+                    new_path = list(path)
+                    # apend the neighbor to the back of the copied path
+                    new_path.append(next_vert)
+                    # add copied path to the stack
+                    s.push(new_path)
+        return None
+
 
     def dfs_recursive(self, starting_vertex, destination_vertex):
         """
@@ -265,12 +298,12 @@ if __name__ == '__main__':
     Valid BFS path:
         [1, 2, 4, 6]
     '''
-    print(graph.bfs(1, 6))
+    # print(graph.bfs(1, 6))
 
     '''
     Valid DFS paths:
         [1, 2, 4, 6]
         [1, 2, 4, 7, 6]
     '''
-    # print(graph.dfs(1, 6))
+    print(graph.dfs(1, 6))
     # print(graph.dfs_recursive(1, 6))
