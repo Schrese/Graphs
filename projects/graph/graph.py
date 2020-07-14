@@ -117,31 +117,75 @@ class Graph:
         
                 
 
-    def bfs(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing the shortest path from
-        starting_vertex to destination_vertex in
-        breath-first order.
-        """
-        # pass  # TODO
-        # Create an empty queue and enque a PATH TO the starting vertex 
-        q = Queue()
-        q.enqueue(starting_vertex)
-        # Create a Set to store the visited vertices
-        visited = []
-        # While the queue is not empty:
-        while q.size() > 0: 
-            # dequeue the first PATH
-            v = q.dequeue()
-            # Grab the last vertex from the PATH
+    # def bfs(self, starting_vertex, destination_vertex):
+    #     """
+    #     Return a list containing the shortest path from
+    #     starting_vertex to destination_vertex in
+    #     breath-first order.
+    #     """
+    #     # pass  # TODO
+    #     # Create an empty queue and enque a PATH TO the starting vertex 
+    #     q = Queue()
+    #     q.enqueue(starting_vertex)
+    #     # Create a Set to store the visited vertices
+    #     visited = set()
+    #     path = set()
+    #     path.add(starting_vertex)
+    #     # While the queue is not empty:
+    #     while q.size() > 0: 
+    #         # dequeue the first PATH
+    #         v = q.dequeue() 
+    #         # Grab the last vertex from the PATH
+    #         print(path)
+    #         # last = path[0]
+    #         # print(path)
+    #         # If that vertex hasn't been visited:
+    #         if v not in visited:
+    #             # Check if it's the target
+    #             if v == destination_vertex:
+    #                 # if so, return the path
+    #                 print(path, 'the path')
+    #                 return path
+    #             # Mark it as visited
+    #             visited.add(v)
+    #             # Then add a PATH TO its neighbors to the back of the queue
+    #             for next_vertex in self.get_neighbors(v):
+    #                 path.add(next_vertex)
+    #                 q.enqueue(next_vertex)
+    #                 # Copy the path
+    #                 # append the neighbor to the back
+    #                 print(path, 'another path')
 
-            # If that vertex hasn't been visited:
-                # Check if it's the target
-                    # if so, return the path
-                # Mark it as visited
-                # Then add a PATH TO its neighbors to the back of the queue
-                    # Copy the path
-                    # append the neighbor to the back
+    # Seems like I was confused about the "path" wording as well as the whole "making a copy of the path". I didn't realize that we weren't checking individual vertices, but rather a list of the path thus far. 
+    def bfs(self, starting_vertex_id, target_vertex_id):
+        # Create an empty queue and enque A PATH TO the starting vertex ID
+        q = Queue()
+        q.enqueue([starting_vertex_id])
+        # Create a Set to store visited vertices
+        visited = set()
+        # While the queue is not empty...
+        while q.size() > 0:
+            # Dequeue the first PATH 
+            path = q.dequeue()
+            # Grab the last vertex from the PATH
+            v = path[-1]
+            # If that vertex has not been visited...
+            if v not in visited:
+                # CHECK IF IT'S THE TARGET
+                if v == target_vertex_id:
+                    # IF SO, RETURN PATH
+                    return path
+                # Mark it as visited...
+                visited.add(v)
+                # Then add A PATH TO its neighbors to the back of the queue
+                    # COPY THE PATH
+                    # APPEND THE NEIGHBOR TO THE BACK
+                for next_vert in self.get_neighbors(v):
+                    # q.enqueue(next_vert) # Can't do this, because this will only append the individual item, not the whole path
+                    new_path = list(path) # Copy the list
+                    new_path.append(next_vert)
+                    q.enqueue(new_path)
+        return None
 
     def dfs(self, starting_vertex, destination_vertex):
         """
@@ -215,7 +259,7 @@ if __name__ == '__main__':
         1, 2, 4, 6, 3, 5, 7
     '''
     # graph.dft(1)
-    graph.dft_recursive(1)
+    # graph.dft_recursive(1)
 
     '''
     Valid BFS path:
