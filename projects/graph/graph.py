@@ -236,7 +236,29 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        # pass  # TODO
+        visited = set()
+        path = []
+        # print(starting_vertex)
+        def inner_function(starting, destination):
+            # Base case is when there isn't a 'next_neighbor' (meaning everything has been visited) or the destination is reached
+            # path = []
+            if starting not in visited: 
+                # path = path + [starting]
+                visited.add(starting)
+                path.append(starting)
+                if starting == destination:
+                    return path
+
+                for next_vert in self.get_neighbors(starting):
+                    new_path = inner_function(next_vert, destination)
+                    print(new_path, starting, 'new path')
+                    if new_path:
+                        return new_path
+            return None
+        return inner_function(starting_vertex, destination_vertex)   
+                
+
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
@@ -305,5 +327,5 @@ if __name__ == '__main__':
         [1, 2, 4, 6]
         [1, 2, 4, 7, 6]
     '''
-    print(graph.dfs(1, 6))
-    # print(graph.dfs_recursive(1, 6))
+    # print(graph.dfs(1, 6))
+    print(graph.dfs_recursive(1, 6))
