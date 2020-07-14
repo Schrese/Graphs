@@ -12,7 +12,7 @@ This is a multi-stage project to implement a basic graph class and traversals.
 [x] dft_recursive()
 [x] bfs()
 [x] dfs()
-[ ] dfs_recursive()
+[x] dfs_recursive()
 
 
 
