@@ -1,5 +1,18 @@
 import random
 
+class Queue():
+    def __init__(self):
+        self.queue = []
+    def enqueue(self, value):
+        self.queue.append(value)
+    def dequeue(self):
+        if self.size() > 0:
+            return self.queue.pop(0)
+        else:
+            return None
+    def size(self):
+        return len(self.queue)
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -61,7 +74,7 @@ class SocialGraph:
         # Shuffle the users
         random.shuffle(possible_friendships)
 
-        for i in range(num_users * avg_friendships // 2):
+        for i in range(num_users * avg_friendships //2):
             friendship = possible_friendships[i]
             self.add_friendship(friendship[0], friendship[1])
 
@@ -76,7 +89,79 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+        # q = Queue()
+        # q.enqueue(self.friendships[user_id])
+        # print(self.friendships[user_id])
+        visited[user_id] = [user_id]
+        # visited['hello'] = ['hi', 'there']
+        print(visited, 'from here')
+        def bfs(starting_friend, ending_friend):
+            q = Queue()
+            q.enqueue([starting_friend])
+
+            visited = set()
+
+            while q.size() > 0:
+                path = q.dequeue()
+                v = path[-1]
+                if v not in visited:
+                    if v == ending_friend:
+                        return path
+                    visited.add(v)
+                    
+                    for friend in self.get_friendos(v):
+                        path_copy = list(path)
+                        path_copy.append(friend)
+                        q.enqueue(path_copy)
+                        print(friend, path, path_copy, 'hello')
+                    
+        bfs(user_id, self.get_friendos(user_id))
+            # for f in self.friendships[user_id]:
+            #     if f not in visited:
+            #         print(f, self.bfs(user_id, f))
+            #         visited[f] = self.bfs(user_id, f)
+            #         self.get_all_social_paths(f)
+
+        # while q.size() > 0:
+        #     # print('hello')
+        #     path = [user_id]
+        #     checking = q.dequeue()
+        #     print(path, checking, 'the path')
+
+        #     for friend in checking:
+        #         print(self.get_friendos(friend), 'function?')
+                # path_copy = path
+                # if friend not in visited:
+                #     visited[friend] = path_copy
+                #     path_copy.append(friend)
+                # print(friend, path_copy, 'from inside the loop')
+
+
         return visited
+
+    def get_friendos(self, user_id):
+        return self.friendships[user_id]
+
+    # def bfs(self, starting_friend, ending_friend):
+    #     q = Queue()
+    #     q.enqueue([starting_friend])
+
+    #     visited = set()
+
+    #     while q.size() > 0:
+    #         path = q.dequeue()
+    #         v = path[-1]
+    #         if v not in visited:
+    #             if v == ending_friend:
+    #                 return path
+    #             visited.add(v)
+                
+    #             for friend in self.get_friendos(v):
+    #                 path_copy = list(path)
+    #                 path_copy.append(friend)
+    #                 q.enqueue(path_copy)
+    #                 # print(friend, path, path_copy, 'hello')
+    #     return None
 
 
 if __name__ == '__main__':
