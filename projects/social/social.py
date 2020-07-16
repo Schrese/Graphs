@@ -1,17 +1,18 @@
 import random
+from collections import deque
 
-class Queue():
-    def __init__(self):
-        self.queue = []
-    def enqueue(self, value):
-        self.queue.append(value)
-    def dequeue(self):
-        if self.size() > 0:
-            return self.queue.pop(0)
-        else:
-            return None
-    def size(self):
-        return len(self.queue)
+# class Queue():
+#     def __init__(self):
+#         self.queue = []
+#     def enqueue(self, value):
+#         self.queue.append(value)
+#     def dequeue(self):
+#         if self.size() > 0:
+#             return self.queue.pop(0)
+#         else:
+#             return None
+#     def size(self):
+#         return len(self.queue)
 
 class User:
     def __init__(self, name):
@@ -96,13 +97,14 @@ class SocialGraph:
         # visited['hello'] = ['hi', 'there']
         print(visited, 'from here')
         def bfs(starting_friend):
-            q = Queue()
-            q.enqueue([starting_friend])
-
+            # q = Queue()
+            # q.enqueue([starting_friend])
+            q = deque()
+            q.append([starting_friend])
                 # been_there = set()
 
-            while q.size() > 0:
-                path = q.dequeue()
+            while len(q) > 0:
+                path = q.pop()
                 print('original', path)
                 v = path[-1]
                 if v not in visited:
@@ -115,7 +117,7 @@ class SocialGraph:
                     # for friend in ending_friend:
                         path_copy = list(path)
                         path_copy.append(friend)
-                        q.enqueue(path_copy)
+                        q.append(path_copy)
                         print(friend, path, path_copy, 'hello')
                         # print(friend, path, 'a;siodfj;oeiawjsdf')        
                         # visited[friend] = path
