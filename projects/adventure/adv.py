@@ -21,7 +21,7 @@ room_graph=literal_eval(open(map_file, "r").read())
 world.load_graph(room_graph)
 
 # Print an ASCII map
-world.print_rooms()
+# world.print_rooms()
 
 player = Player(world.starting_room)
 
@@ -34,76 +34,88 @@ traversal_path = []
 
 room = player.current_room
 # This will need to be updated to be the last direction that the player moved in
-direction_facing = "s"
+direction_facing = "n"
 # This will get updated when "direction_facing" gets updated. It's the next path that the player will look for
 left_path = "w"
 forward_path = "n"
 right_path = "e"
 back_path = "s"
 
-if direction_facing == "n":
-    left_path = "w"
-    forward_path = "n"
-    right_path = "e"
-    back_path = "s"
+# updates direction facing and calls update_dir_paths function to run at the same time
+def update_dir_facing(dir, direction_facing):
+    direction_facing = dir
+    update_dir_paths(dir)
 
-if direction_facing == "e":
-    left_path = "n"
-    forward_path = "e"
-    right_path = "s"
-    back_path = "w"
+# Takes a direction and directional paths above as arguments and updates the paths with correct directions
+def update_dir_paths(dir):
+    print(dir)
+    if dir == "w":
+        left_path = "s"
+        forward_path = "w"
+        right_path = "n"
+        back_path = "e"
+        print('west', left_path, forward_path, right_path, back_path)
 
-if direction_facing == "s":
-    left_path = "e"
-    forward_path = "s"
-    right_path = "w"
-    back_path = "n"
+    elif dir == "n":
+        left_path = "w"
+        forward_path = "n"
+        right_path = "e"
+        back_path = "s"        
+        print('north', left_path, forward_path, right_path, back_path)
+    
+    elif dir == "e":
+        left_path = "n"
+        forward_path = "e"
+        right_path = "s"
+        back_path = "w"
+        print('east', left_path, forward_path, right_path, back_path)
+    
+    else:
+        left_path = "e"
+        forward_path = "s"
+        right_path = "w"
+        back_path = "n"
+        print("south", left_path, forward_path, right_path, back_path)
 
-if direction_facing == "w":
-    left_path = "s"
-    forward_path = "w"
-    right_path = "n"
-    back_path = "e"
 
-def exploration(current):
+# update_dir_facing("e", direction_facing)
+
+def exploration(current, direction_facing):
     print(len(room_graph))
 
     while len(traversal_path) < len(room_graph):
-        if left_path in room.get_exits():
-            print('option 1')
-            player.travel(left_path, True)
-            traversal_path.append(left_path)
-            direction_facing = left_path
-            # print(direction_facing)
-            exploration(player.current_room)
+        # print(left_path, forward_path, right_path, back_path)
 
-        elif left_path not in room.get_exits():
-            print('option 1')
-            player.travel(forward_path, True)
-            traversal_path.append(forward_path)
-            direction_facing = forward_path
-            exploration(player.current_room)
+        # if left_path in room.get_exits():
+        #     print('option 1')
+        #     player.travel(left_path, True)
+        #     traversal_path.append(left_path)
+        #     update_dir_facing(left_path, direction_facing)
+        #     # direction_facing = left_path
+        #     # print(direction_facing)
+        #     # exploration(player.current_room)
 
-        elif left_path and forward_path not in room.get_exits():
-            print('option 3')
-            player.travel(right_path, True)
-            traversal_path.append(right_path)
-            direction_facing = right_path
-            exploration(player.current_room)
+        # else:
+        #     if forward_path in room.get_exits():
+        #         print('option 1')
+        #         player.travel(forward_path, True)
+        #         traversal_path.append(forward_path)
+        #         direction_facing = forward_path
 
-        elif left_path and forward_path and right_path not in room.get_exits():
-            print('option 4')
-            player.travel(back_path, True)
-            traversal_path.append(back_path)
-            direction_facing = right_path
-            exploration(player.current_room)
-        
-        else:
-            print('idk what to do here')
-    print(player)
+        #     else:
+        #         if right_path in room.get_exits():
+        #             print('option 3')
+        #             player.travel(right_path, True)
+        #             traversal_path.append(right_path)
+        #             direction_facing = right_path
+        #         else:
+        #             print('option 4')
+        #             player.travel(back_path, True)
+        #             traversal_path.append(back_path)
+        #             direction_facing = right_path
 
-exploration(room)
-print(player.current_room, room.id, traversal_path, ';aoisjd;ofije;oaij;sodifjo;eijaof')
+exploration(room, direction_facing)
+print(player.current_room, room.id, traversal_path, direction_facing, ';aoisjd;ofije;oaij;sodifjo;eijaof')
 # print(room, 'were in the room mr hat')
 
 # # TRAVERSAL TEST
