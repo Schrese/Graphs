@@ -99,22 +99,24 @@ class SocialGraph:
             q = Queue()
             q.enqueue([starting_friend])
 
-            visited = set()
+            been_there = set()
 
             while q.size() > 0:
                 path = q.dequeue()
+                print('original', path)
                 v = path[-1]
-                if v not in visited:
+                if v not in been_there:
                     if v == ending_friend:
                         return path
-                    visited.add(v)
+                    been_there.add(v)
                     
                     for friend in self.get_friendos(v):
                         path_copy = list(path)
                         path_copy.append(friend)
                         q.enqueue(path_copy)
-                        print(friend, path, path_copy, 'hello')
-                    
+                        # print(friend, path, path_copy, 'hello')
+                    print(friend, path, 'a;siodfj;oeiawjsdf')        
+                    visited[friend] = path            
         bfs(user_id, self.get_friendos(user_id))
             # for f in self.friendships[user_id]:
             #     if f not in visited:
