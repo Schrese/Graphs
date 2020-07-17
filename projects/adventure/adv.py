@@ -21,7 +21,7 @@ room_graph=literal_eval(open(map_file, "r").read())
 world.load_graph(room_graph)
 
 # Print an ASCII map
-# world.print_rooms()
+world.print_rooms()
 
 player = Player(world.starting_room)
 
@@ -82,30 +82,66 @@ incomplete_rooms = []
 incomplete_rooms.append(player.current_room.id)
 previous_room_id = 0
 cardinal_directions = ["n", "s", "e", "w"]
+def go_forward(direct):
+    player.travel(direct, True)
 
 def explore_room(r):
-    print(r.id)
-    # print(player.current_room)
     if r not in visited:
-        print('awesome')
-        visited[r] = {"w": "?", "n": "?", "e": "?", "s": "?"}
+        visited[r.id] = {"w": "?", "n": "?", "e": "?", "s": "?"}
+        print(r.get_exits()) 
+        if "w" not in r.get_exits():
+            visited[r.id].update({"w": None})
+        if "n" not in r.get_exits():
+            visited[r.id].update({"n": None})
+        if "e" not in r.get_exits():
+            visited[r.id].update({"e": None})
+        if "s" not in r.get_exits():
+            visited[r.id].update({"s": None})
+
         # print(exits, 'exits')
-    
+    if "?" not in visited[r.id].values():
+        print('completed')
+        incomplete_rooms.remove(r.id)
+    else:
+        print('more to get done')
 
-    # If the room id is in visited, check to see if "n", "s", "e", "w" don't have a "?" as the value, 
-    # if they do, then it stays in the incomplete_rooms_visited list, otherwise it is marked as "complete" (using the setdefault() method)
-    # If a room is in the incomplete_rooms_visited list already, then continue on and update the "previous room" and mark as complete if needed
-    # If a room is not in the visited directory, then add it with default values
+    if (left_path not in room.get_exits()) and (forward_path not in room.get_exits()) and (right_path not in room.get_exits()):
+        print("hello")
+        update_dir_facing(back_path, direction_facing)
+        player.travel(back_path)
+        traversal_path.append(back_path)
+    elif (left_path not in room.get_exits()) and (forward_path not in room.get_exits()):
+        print("drakness")
+        update_dir_facing(right_path, direction_facing)
+        player.travel(right_path)
+        traversal_path.append(right_path)
+    elif (left_path not in room.get_exits()):
+        print(forward_path, "my old friend")
+        update_dir_facing(forward_path, direction_facing)
+        player.travel(forward_path)
+        traversal_path.append(forward_path)
+    else:
+        print('I can go left')
+        update_dir_facing(left_path, direction_facing)
+        player.travel(left_path)
+        traversal_path.append(left_path)
 
-    # visited[room_id] = {"w": "?", "n": "?", "e": "?", "s": "?"}
-    # visited[room_id] = {"w": "2", "n": 5, "e": None, "s": "?", "completed": False}
-
-while len(room_graph) < 0:
-    player.travel(direction_facing)
-
+while len(traversal_path) < len(room_graph) - 1:
+    explore_room(player.current_room)    
 
 # explore_room(player.current_room)
-print(incomplete_rooms, cardinal_directions, room.id, visited)
+# go_forward(direction_facing)    
+
+# while len(incomplete_rooms) < 2:
+# explore_room(player.current_room)
+
+# make_traversals(direction_facing)
+# explore_room(player.current_room)
+print(player.current_room.id)
+# player.travel("n")
+player.current_room.print_room_description(player)
+print('VISITED', visited)
+print("all the things", incomplete_rooms, room.id, direction_facing, traversal_path, len(room_graph))
 # traveling(player.current_room)
 # print(visited[0].get("completed"))
 # print(len(visited[0]), 'length')
