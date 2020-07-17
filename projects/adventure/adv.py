@@ -78,34 +78,56 @@ def update_dir_paths(dir):
         print("south", left_path, forward_path, right_path, back_path)
 
 visited = {}
-def explore_room(room_id):
-    # print(room_id)
-    visited[room_id] = {"w": "", "n": "", "e": "", "s": ""}
-    visited[room_id] = {"w": "2", "n": 5, "e": None, "s": "?", "completed": False}
+incomplete_rooms = []
+incomplete_rooms.append(player.current_room.id)
+previous_room_id = 0
+cardinal_directions = ["n", "s", "e", "w"]
+
+def explore_room(r):
+    print(r.id)
+    # print(player.current_room)
+    if r not in visited:
+        print('awesome')
+        visited[r] = {"w": "?", "n": "?", "e": "?", "s": "?"}
+        # print(exits, 'exits')
+    
+
+    # If the room id is in visited, check to see if "n", "s", "e", "w" don't have a "?" as the value, 
+    # if they do, then it stays in the incomplete_rooms_visited list, otherwise it is marked as "complete" (using the setdefault() method)
+    # If a room is in the incomplete_rooms_visited list already, then continue on and update the "previous room" and mark as complete if needed
+    # If a room is not in the visited directory, then add it with default values
+
+    # visited[room_id] = {"w": "?", "n": "?", "e": "?", "s": "?"}
+    # visited[room_id] = {"w": "2", "n": 5, "e": None, "s": "?", "completed": False}
+
+while len(room_graph) < 0:
+    player.travel(direction_facing)
 
 
-explore_room(player.current_room.id)
-print(visited[0].get("completed"))
-print(len(visited[0]), 'length')
+# explore_room(player.current_room)
+print(incomplete_rooms, cardinal_directions, room.id, visited)
+# traveling(player.current_room)
+# print(visited[0].get("completed"))
+# print(len(visited[0]), 'length')
+# print(visited[0].update({"w": 10}))
 
 # update_dir_facing("e", direction_facing)
 
-print(player.current_room.id, room.id, traversal_path, direction_facing, visited, ';aoisjd;ofije;oaij;sodifjo;eijaof')
 
-# # TRAVERSAL TEST
-# visited_rooms = set()
-# player.current_room = world.starting_room
-# visited_rooms.add(player.current_room)
+# TRAVERSAL TEST
+visited_rooms = set()
+player.current_room = world.starting_room
+visited_rooms.add(player.current_room)
 
-# for move in traversal_path:
-#     player.travel(move)
-#     visited_rooms.add(player.current_room)
+for move in traversal_path:
+    player.travel(move)
+    visited_rooms.add(player.current_room)
 
-# if len(visited_rooms) == len(room_graph):
-#     print(f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
-# else:
-#     print("TESTS FAILED: INCOMPLETE TRAVERSAL")
-#     print(f"{len(room_graph) - len(visited_rooms)} unvisited rooms")
+if len(visited_rooms) == len(room_graph):
+    print(f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
+else:
+    print("TESTS FAILED: INCOMPLETE TRAVERSAL")
+    print(f"{len(room_graph) - len(visited_rooms)} unvisited rooms")
 
 
 
