@@ -33,51 +33,6 @@ player = Player(world.starting_room)
 traversal_path = []
 
 room = player.current_room
-# # This will need to be updated to be the last direction that the player moved in
-# direction_facing = "n"
-# # This will get updated when "direction_facing" gets updated. It's the next path that the player will look for
-# left_path = "w"
-# forward_path = "n"
-# right_path = "e"
-# back_path = "s"
-
-# updates direction facing and calls update_dir_paths function to run at the same time
-def update_dir_facing(dir, direction_facing):
-    direction_facing = dir
-    update_dir_paths(dir)
-
-# Takes a direction and directional paths above as arguments and updates the paths with correct directions
-def update_dir_paths(dir):
-    # print(dir)
-    if dir == "w":
-        left_path = "s"
-        forward_path = "w"
-        right_path = "n"
-        back_path = "e"
-        # print('west', left_path, forward_path, right_path, back_path)
-
-    elif dir == "n":
-        left_path = "w"
-        forward_path = "n"
-        right_path = "e"
-        back_path = "s"        
-        # print('north', left_path, forward_path, right_path, back_path)
-    
-    elif dir == "e":
-        left_path = "n"
-        forward_path = "e"
-        right_path = "s"
-        back_path = "w"
-        # print('east', left_path, forward_path, right_path, back_path)
-    
-    else:
-        left_path = "e"
-        forward_path = "s"
-        right_path = "w"
-        back_path = "n"
-        # print("south", left_path, forward_path, right_path, back_path)
-
-# update_dir_facing("s", direction_facing)
 
 visited = {}
 incomplete_rooms = []
