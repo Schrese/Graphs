@@ -36,17 +36,19 @@ room = player.current_room
 
 visited = {}
 completed_rooms = [0] * 2 
+cur_past = {}
 # incomplete_rooms.append(player.current_room.id)
 try_this = False
 last_direction = ""
 
 incomplete_rooms = []
+
 def explore_room(r, d):
     print(incomplete_rooms)
     print(d, 'direction facing coming into the room')
+    pr = completed_rooms[1]
+    cr = completed_rooms[0]
     if r.id not in visited:
-        pr = completed_rooms[1]
-        fr = completed_rooms[0]
         visited[r.id] = {"w": "?", "n": "?", "e": "?", "s": "?"}
         if "w" not in r.get_exits():
             visited[r.id].update({"w": None})
@@ -58,16 +60,16 @@ def explore_room(r, d):
             visited[r.id].update({"s": None})
         if d == "w":
             visited[r.id].update({"e": completed_rooms[1]})
-            # visited[fr].update({"w": r.id})
+            # visited[cr].update({"w": r.id})
         if d == "n":
             visited[r.id].update({"s": completed_rooms[1]})
-            # visited[fr].update({"n": r.id})
+            # visited[cr].update({"n": r.id})
         if d == "e":
             visited[r.id].update({"w": completed_rooms[1]})
-            # visited[fr].update({"e": r.id})
+            # visited[cr].update({"e": r.id})
         if d == "s":
             visited[r.id].update({"n": completed_rooms[1]})
-            # visited[fr].update({"s": r.id})
+            # visited[cr].update({"s": r.id})
         incomplete_rooms.append(r.id)
         completed_rooms[1] = r.id
         pr = completed_rooms[0]
@@ -78,7 +80,7 @@ def explore_room(r, d):
     if r.id in visited:
         print('continuing', visited[r.id])
         pr = completed_rooms[1]
-        fr = completed_rooms[0]
+        cr = completed_rooms[0]
         # completed_rooms[0] = r.id
         # completed_rooms[1] = pr
 
@@ -86,26 +88,34 @@ def explore_room(r, d):
             # completed_rooms[1], completed_rooms[0] = completed_rooms[0], completed_rooms[1]
             if d == "w":
                 visited[r.id].update({"e": completed_rooms[1]})
-                visited[fr].update({"w": r.id})
+                visited[cr].update({"w": r.id})
             if d == "n":
                 visited[r.id].update({"s": completed_rooms[1]})
-                visited[fr].update({"n": r.id})
+                visited[cr].update({"n": r.id})
             if d == "e":
                 visited[r.id].update({"w": completed_rooms[1]})
-                visited[fr].update({"e": r.id})
+                visited[cr].update({"e": r.id})
             if d == "s":
                 visited[r.id].update({"n": completed_rooms[1]})
-                visited[fr].update({"s": r.id})
+                visited[cr].update({"s": r.id})
 
             completed_rooms[1], completed_rooms[0] = pr,r.id
     
-            if "?" not in visited[r.id].values():
-                print('completed', r.id)
-                incomplete_rooms.remove(r.id)
-                # try_this = True
+            # if "?" not in visited[r.id].values():
+            #     print('completed', r.id)
+            #     incomplete_rooms.remove(r.id)
+            #     # try_this = True
             if "?" not in visited[completed_rooms[1]]:
                 print('completed', completed_rooms[1])
-    
+
+    completed_rooms[0], completed_rooms[1] = completed_rooms[0], r.id
+
+    for e in incomplete_rooms:
+        if "?" not in visited[e].values():
+            incomplete_rooms.remove(e)
+            print('removed', e)
+            return
+
     # return previous_room_id
 
 
@@ -123,7 +133,7 @@ def do_things():
         "back_path": "s"
     }
 
-    while r < 8:
+    while r < 14:
         print(player.current_room.id, completed_rooms, 'what is this looking like?')
         # global direction_facing
         if len(traversal_path) > 0:
@@ -191,18 +201,6 @@ def do_things():
             back_path = travel_directions.get("back_path")
             print(back_path, 'this should be east for all of these')
             only_room = player.current_room.get_exits()
-            # print(only_room[0], 'for the love of GOD')
-            # visited[previ].update({orig_direction: player.current_room.id})
-            # visited[player.current_room.id].update({back_path: previ})s
-            # update_dir_facing(only_room[0], direction_facing)
-        # for i in visited:
-        #     print(visited[i])
-        # for d in incomplete_rooms:
-        #     # print(incomplete_rooms)
-        #     if "?" not in visited[d].values():
-        #         print('completed')
-        #         incomplete_rooms.remove(d)
-        #         try_this = True
         player.current_room.print_room_description(player)
 do_things()
 
