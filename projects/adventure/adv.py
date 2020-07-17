@@ -10,8 +10,8 @@ world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-# map_file = "maps/test_line.txt"
-map_file = "maps/test_cross.txt"
+map_file = "maps/test_line.txt"
+# map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
 # map_file = "maps/main_maze.txt"
@@ -77,46 +77,20 @@ def update_dir_paths(dir):
         back_path = "n"
         print("south", left_path, forward_path, right_path, back_path)
 
+visited = {}
+def explore_room(room_id):
+    # print(room_id)
+    visited[room_id] = {"w": "", "n": "", "e": "", "s": ""}
+    visited[room_id] = {"w": "2", "n": 5, "e": None, "s": "?", "completed": False}
+
+
+explore_room(player.current_room.id)
+print(visited[0].get("completed"))
+print(len(visited[0]), 'length')
 
 # update_dir_facing("e", direction_facing)
 
-def exploration(current, direction_facing):
-    print(len(room_graph))
-
-    while len(traversal_path) < len(room_graph):
-        # print(left_path, forward_path, right_path, back_path)
-
-        # if left_path in room.get_exits():
-        #     print('option 1')
-        #     player.travel(left_path, True)
-        #     traversal_path.append(left_path)
-        #     update_dir_facing(left_path, direction_facing)
-        #     # direction_facing = left_path
-        #     # print(direction_facing)
-        #     # exploration(player.current_room)
-
-        # else:
-        #     if forward_path in room.get_exits():
-        #         print('option 1')
-        #         player.travel(forward_path, True)
-        #         traversal_path.append(forward_path)
-        #         direction_facing = forward_path
-
-        #     else:
-        #         if right_path in room.get_exits():
-        #             print('option 3')
-        #             player.travel(right_path, True)
-        #             traversal_path.append(right_path)
-        #             direction_facing = right_path
-        #         else:
-        #             print('option 4')
-        #             player.travel(back_path, True)
-        #             traversal_path.append(back_path)
-        #             direction_facing = right_path
-
-exploration(room, direction_facing)
-print(player.current_room, room.id, traversal_path, direction_facing, ';aoisjd;ofije;oaij;sodifjo;eijaof')
-# print(room, 'were in the room mr hat')
+print(player.current_room.id, room.id, traversal_path, direction_facing, visited, ';aoisjd;ofije;oaij;sodifjo;eijaof')
 
 # # TRAVERSAL TEST
 # visited_rooms = set()
