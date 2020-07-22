@@ -74,16 +74,14 @@ visited = {}
 incomplete_rooms = []
 
 # Current room at [1], past room at [0]
-curent_and_past_rooms = [0] * 2 
+current_and_past_rooms = [0] 
 
 # Dictionary that has the paths from the last room with "?'s" to the current room. A new entry is made each time a new room with more than 1 direction that has not been explored yet
 backtracking_path = {}
 
 # Explores current player-room. Used in 
 def explore_room(r, d):
-    pr = curent_and_past_rooms[0] # past room from "curent_and_past_rooms"
-    cr = curent_and_past_rooms[1] # curent room from "curent_and_past_rooms"
-
+    print(f"Past Room: {current_and_past_rooms[-1]}, Current Room: {r.id}")
     # If this is a new room (not in visited dictionary)
     if r.id not in visited:
         # Create an "visited" dictionary entry
@@ -101,55 +99,46 @@ def explore_room(r, d):
         
         # Update the directional values for whatever the past room's directions
         if d == "w":
-            visited[r.id].update({"e": curent_and_past_rooms[0]})
+            visited[r.id].update({"e": current_and_past_rooms[-1]})
         if d == "n":
-            visited[r.id].update({"s": curent_and_past_rooms[0]})
+            visited[r.id].update({"s": current_and_past_rooms[-1]})
         if d == "e":
-            visited[r.id].update({"w": curent_and_past_rooms[0]})
+            visited[r.id].update({"w": current_and_past_rooms[-1]})
         if d == "s":
-            visited[r.id].update({"n": curent_and_past_rooms[0]})
+            visited[r.id].update({"n": current_and_past_rooms[-1]})
 
         # add this room to "incomplete_rooms" list    
         incomplete_rooms.append(r.id)
 
-        # Swapping the "current_and_past_rooms" for the next room
-        curent_and_past_rooms[1] = r.id
-        pr = curent_and_past_rooms[0]
-        curent_and_past_rooms[1], curent_and_past_rooms[0] = r.id, pr
-
     # If this room has been visited, then update the values for both in visited
     if r.id in visited:
-        pr = curent_and_past_rooms[1] 
-        cr = curent_and_past_rooms[0]
-
         # Updates past and curent rooms' directions
         if visited[r.id].get(d) is not None:
             if d == "w":
-                visited[r.id].update({"e": curent_and_past_rooms[1]})
+                visited[r.id].update({"e": current_and_past_rooms[-1]})
                 visited[cr].update({"w": r.id})
             if d == "n":
-                visited[r.id].update({"s": curent_and_past_rooms[1]})
+                visited[r.id].update({"s": current_and_past_rooms[-1]})
                 visited[cr].update({"n": r.id})
             if d == "e":
-                visited[r.id].update({"w": curent_and_past_rooms[1]})
+                visited[r.id].update({"w": current_and_past_rooms[-1]})
                 visited[cr].update({"e": r.id})
             if d == "s":
-                visited[r.id].update({"n": curent_and_past_rooms[1]})
+                visited[r.id].update({"n": current_and_past_rooms[-1]})
                 visited[cr].update({"s": r.id})
-
-            curent_and_past_rooms[1], curent_and_past_rooms[0] = pr,r.id
     
-            if "?" not in visited[curent_and_past_rooms[1]]:
-                print('completed', curent_and_past_rooms[1])
+            if "?" not in visited[current_and_past_rooms[-1]]:
+                print('completed', current_and_past_rooms[-1])
 
-        # Swaps the "curent_and_past_rooms" list values at 0 and 1
-        curent_and_past_rooms[0], curent_and_past_rooms[1] = curent_and_past_rooms[0], r.id
+
 
 
     if len(player.current_room.get_exits()) > 2 and (player.current_room.id in visited):
         backtracking_path[player.current_room.id] = list()
         backtracking_path[player.current_room.id].append(player.current_room.id)
         last_unknown = player.current_room.id
+
+    past_room = r.id
 
     # checks to see if there are any "completed" rooms that can be removed from the "incomplete_rooms" list
     for e in incomplete_rooms:
@@ -158,6 +147,7 @@ def explore_room(r, d):
             print('removed', e)
             return
 
+    current_and_past_rooms.append(r.id)
 
 # Calls "explore_room", and gives directions for which way the player should move
 def traversing():
@@ -234,16 +224,16 @@ def traversing():
 
 
         # If we have gotten back to a last unknown with a backtracking length greater than 1, we have hit a "loop", so we need to backtrack to the first room
-        if  (player.current_room.id == last_unknown) and (len(backtracking_path) > 1):
-            next_dir = backtracking_path[last_unknown].pop()
-            if next_dir == "n":
-                player.travel("s")
-            if next_dir == "s":
-               player.travel("n")
-            if next_dir == "e":
-                player.travel("w")
-            if next_dir == "w":
-                player.travel("e")
+        # if  (player.current_room.id == last_unknown) and (len(backtracking_path) > 1):
+        #     next_dir = backtracking_path[last_unknown].pop()
+        #     if next_dir == "n":
+        #         player.travel("s")
+        #     if next_dir == "s":
+        #        player.travel("n")
+        #     if next_dir == "e":
+        #         player.travel("w")
+        #     if next_dir == "w":
+        #         player.travel("e")
 
         # If the player hits a dead-end, they backtrack to the last unknown room and continue from there
         if len(player.current_room.get_exits()) == 1:
