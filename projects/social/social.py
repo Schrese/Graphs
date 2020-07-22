@@ -95,7 +95,7 @@ class SocialGraph:
         # print(self.friendships[user_id])
         # visited[user_id] = [user_id]
         # visited['hello'] = ['hi', 'there']
-        print(visited, 'from here')
+        # print(visited, 'from here')
         def bfs(starting_friend):
             # q = Queue()
             # q.enqueue([starting_friend])
@@ -105,7 +105,7 @@ class SocialGraph:
 
             while len(q) > 0:
                 path = q.pop()
-                print('original', path)
+                # print('original', path)
                 v = path[-1]
                 if v not in visited:
                     # if v == ending_friend:
@@ -118,7 +118,7 @@ class SocialGraph:
                         path_copy = list(path)
                         path_copy.append(friend)
                         q.append(path_copy)
-                        print(friend, path, path_copy, 'hello')
+                        # print(friend, path, path_copy, 'hello')
                         # print(friend, path, 'a;siodfj;oeiawjsdf')        
                         # visited[friend] = path
         bfs(user_id)

@@ -71,7 +71,11 @@ visited = {}
 completed_rooms = [0] * 2 
 
 incomplete_rooms = []
+
+backtracking_path = {}
+
 def explore_room(r, d):
+    # last_unknown = room.id
     print(incomplete_rooms)
     print(d, 'direction facing coming into the room')
     pr = completed_rooms[1]
@@ -88,32 +92,24 @@ def explore_room(r, d):
             visited[r.id].update({"s": None})
         if d == "w":
             visited[r.id].update({"e": completed_rooms[1]})
-            # visited[cr].update({"w": r.id})
         if d == "n":
             visited[r.id].update({"s": completed_rooms[1]})
-            # visited[cr].update({"n": r.id})
         if d == "e":
             visited[r.id].update({"w": completed_rooms[1]})
-            # visited[cr].update({"e": r.id})
         if d == "s":
             visited[r.id].update({"n": completed_rooms[1]})
-            # visited[cr].update({"s": r.id})
         incomplete_rooms.append(r.id)
         completed_rooms[1] = r.id
         pr = completed_rooms[0]
         completed_rooms[1], completed_rooms[0] = r.id, pr
-        # completed_rooms[0] = d
-        # completed_rooms[1], completed_rooms[0] = completed_rooms[0], completed_rooms[1]
-        # print(exits, 'exits')
+
     if r.id in visited:
         print('continuing', visited[r.id])
         pr = completed_rooms[1]
         cr = completed_rooms[0]
-        # completed_rooms[0] = r.id
-        # completed_rooms[1] = pr
+        # backtracking_path[r.id].append(d)
 
         if visited[r.id].get(d) is not None:
-            # completed_rooms[1], completed_rooms[0] = completed_rooms[0], completed_rooms[1]
             if d == "w":
                 visited[r.id].update({"e": completed_rooms[1]})
                 visited[cr].update({"w": r.id})
@@ -129,14 +125,20 @@ def explore_room(r, d):
 
             completed_rooms[1], completed_rooms[0] = pr,r.id
     
-            # if "?" not in visited[r.id].values():
-            #     print('completed', r.id)
-            #     incomplete_rooms.remove(r.id)
-            #     # try_this = True
             if "?" not in visited[completed_rooms[1]]:
                 print('completed', completed_rooms[1])
 
     completed_rooms[0], completed_rooms[1] = completed_rooms[0], r.id
+
+
+    if len(player.current_room.get_exits()) > 2 and (player.current_room.id in visited):
+        backtracking_path[player.current_room.id] = list()
+        backtracking_path[player.current_room.id].append(player.current_room.id)
+        # backtracking_path[player.current_room.id].append(d)
+        last_unknown = player.current_room.id
+
+    print(backtracking_path, 'back it up!!!!!!')
+
 
     for e in incomplete_rooms:
         if "?" not in visited[e].values():
@@ -144,6 +146,7 @@ def explore_room(r, d):
             print('removed', e)
             return
 
+    # backtracking_path[1].update({tuple()})
     # return previous_room_id
 
 
@@ -161,13 +164,14 @@ def do_things():
         "back_path": "s"
     }
 
+    last_unknown = 0
     continuing = True
 
     # if (len(incomplete_rooms) <= 0) and (len(visited) == len(room_graph)):
     #     continuing = False
 
     # while r < 3000:
-    while r < 14:
+    while r < 17:
         print(player.current_room.id, completed_rooms, 'what is this looking like?')
         # global direction_facing
         if len(traversal_path) > 0:
@@ -178,6 +182,7 @@ def do_things():
         previ = completed_rooms[0]
         # print(direction_facing, travel_directions, 'there must be something wrong here')
 
+        # Sets travel directions depending on the direction facing
         if direction_facing == "s":
             travel_directions.update({"left_path": "e", "forward_path": "s", "right_path": "w", "back_path": "n"})
 
@@ -190,28 +195,18 @@ def do_things():
         else:
             travel_directions.update({"left_path": "s", "forward_path": "w", "right_path": "n", "back_path": "e"})
 
-        previ = 0
 
-        # if player.current_room.id == room.id:
-        #     print('move along, nothing to see here')
-
-        if (travel_directions.get("left_path") not in player.current_room.get_exits()) and (travel_directions.get("forward_path") not in player.current_room.get_exits()) and (travel_directions.get("right_path") not in player.current_room.get_exits()):
-            # print("hello")
-            back_path = travel_directions.get("back_path")
-            direction_facing = back_path
-            player.travel(back_path)
-            # visited[previ].update({back_path: player.current_room.id})
-            # visited[player.current_room.id].update({forward_path: previ})
-            traversal_path.append(back_path)
-        elif (travel_directions.get("left_path") not in player.current_room.get_exits()) and (travel_directions.get("forward_path") not in player.current_room.get_exits()):
+        # Actual Traversal Instructions
+        if (travel_directions.get("left_path") not in player.current_room.get_exits()) and (travel_directions.get("forward_path") not in player.current_room.get_exits()):
             # print("drakness")
             right_path = travel_directions.get("right_path")
             player.travel(right_path)
             # visited[previ].update({right_path: player.current_room.id})
             # visited[player.current_room.id].update({left_path: previ})
             traversal_path.append(right_path)
+            backtracking_path[last_unknown].append(right_path)
             # update_dir_facing(right_path, direction_facing)
-        elif (travel_directions.get("left_path") not in player.current_room.get_exits()):
+        elif (travel_directions.get("left_path") not in player.current_room.get_exits()) and (travel_directions.get("right_path") not in player.current_room.get_exits()):
         # else:
             # print(forward_path, "my old friend")
             forward_path = travel_directions.get("forward_path")
@@ -219,22 +214,53 @@ def do_things():
             # visited[previ].update({forward_path: player.current_room.id})
             # visited[player.current_room.id].update({back_path: previ})
             traversal_path.append(forward_path)
+            backtracking_path[last_unknown].append(forward_path)
             # update_dir_facing(forward_path, direction_facing)
         # elif (left_path in room.get_exits()) and (forward_path not in room.get_exits()) and (right_path not in room.get_exits()) and (left_path not in room.get_exits()):
         else:
-            print('I can go left')
+            # print('I can go left')
             left_path = travel_directions.get("left_path")
             player.travel(left_path)
             # visited[previ].update({left_path: player.current_room.id})
             # visited[player.current_room.id].update({right_path: previ})
             traversal_path.append(left_path) 
+            backtracking_path[last_unknown].append(left_path)
             # update_dir_facing(left_path, direction_facing)
+
+        # if len(player.current_room.get_exits()) == 2:
+        #     backtracking_path[last_unknown].append(direction_facing)
+
+        # if  (player.current_room.id == last_unknown) and (len(backtracking_path) > 1):
+        #     next_dir = backtracking_path[last_unknown].pop()
+
+            # if next_dir == "n":
+            #     player.travel("s")
+            # if next_dir == "s":
+            #    player.travel("n")
+            # if next_dir == "e":
+            #     player.travel("w")
+            # if next_dir == "w":
+            #     player.travel("e")
+
+        # if len(player.current_room.get_exits()) == 1:
+        #         # orig_direction = direction_facing
+        #         # back_path = travel_directions.get("back_path")
+        #         # print(back_path, 'this should be east for all of these')
+        #         # only_room = player.current_room.get_exits()
+        #     next_dir = backtracking_path[last_unknown].pop()
+        #     if next_dir == "n":
+        #         player.travel("s")
+        #     if next_dir == "s":
+        #         player.travel("n")
+        #     if next_dir == "e":
+        #         player.travel("w")
+        #     if next_dir == "w":
+        #         player.travel("e")
+        #     if next_dir == last_unknown:
+        #         player.travel("e")
+        # #     # else:
         
-        if len(player.current_room.get_exits()) == 1:
-            orig_direction = direction_facing
-            back_path = travel_directions.get("back_path")
-            print(back_path, 'this should be east for all of these')
-            only_room = player.current_room.get_exits()
+        print(visited, 'interesting things')
         player.current_room.print_room_description(player)
 do_things()
 
