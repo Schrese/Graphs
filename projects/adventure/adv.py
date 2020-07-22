@@ -10,10 +10,10 @@ world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-# map_file = "maps/test_line.txt"
+map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
-map_file = "maps/test_loop_fork.txt"
+# map_file = "maps/test_loop_fork.txt"
 # map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
@@ -68,24 +68,25 @@ traversal_path = []
 room = player.current_room
 
 # dictionary of each visited room. Each entry has values for n,s,e,w
+# visited = {0: {'w': '?', 'n': '?', 'e': '?', 's': '?'}}
 visited = {}
 
 # List of rooms that still have "?" as a value in the visited entry for that room
 incomplete_rooms = []
 
-# Current room at [1], past room at [0]
-past_rooms = [] 
+# all past-rooms visited
+past_rooms = [0] 
 
 # Dictionary that has the paths from the last room with "?'s" to the current room. A new entry is made each time a new room with more than 1 direction that has not been explored yet
 backtracking_path = {}
 
-# Explores current player-room. Used in 
+# Explores current player-room. Used in "traversing()" method
 def explore_room(r, d):
+    # d = traversal_path[-1]
     # If this is a new room (not in visited dictionary)
-
     if len(visited) < 1:
         visited[r.id] = {"w": "?", "n": "?", "e": "?", "s": "?"}
-        past_rooms.append(r.id)
+        # past_rooms.append(r.id)
 
     if r.id not in visited:
         # Create an "visited" dictionary entry
@@ -139,7 +140,7 @@ def explore_room(r, d):
 
 
 
-    print(f"Direction: {d}, \n {traversal_path} \n Past Rooms: {past_rooms}, \n Current Room: {r.id}, \n {visited}")
+    # print(f"{traversal_path} \n Past Rooms: {past_rooms}, \n Current Room: {r.id}, \n {visited}")
 
     if len(player.current_room.get_exits()) > 2 and (player.current_room.id in visited):
         backtracking_path[player.current_room.id] = list()
@@ -161,104 +162,49 @@ def explore_room(r, d):
 def traversing():
     r = 0 # Counter for my temporary while-loop
 
-    # Direction the player is facing (for updating the left, forward, right, and back paths)
-    direction_facing = "n"
-
-    # Base travel directions for when the player is facing north (updated in the while-loop)
-    travel_directions = {
-        "left_path": "w",
-        "forward_path": "n",
-        "right_path": "e",
-        "back_path": "s"
-    }
-
     # The last room with unexplored rooms (MAYBE I SHOULD MAKE THIS INTO A LIST INSTEAD???????)
     last_unknown = 0
 
     # for the while loop once completed
     continuing = True
 
+    # Picks a random direction to start out in (among the unexplored options)
+    def random_dir(player_room):
+        all_directions = player.current_room.get_exits()
+        unexplored = []
+        if player_room not in visited:
+            for d in all_directions:
+                unexplored.append(d)
+        
+        if player_room in visited:
+            for d in all_directions:
+                check_for_unexplored = visited[player_room].get(d)
+                print(check_for_unexplored, 'check for unexplored')
+                if check_for_unexplored == "?":
+                    unexplored.append(d)
+
+        random.shuffle(unexplored)
+        next_direction = unexplored[0]
+        print(f"Current Room: {player.current_room.id}, \n Unexplored: {unexplored}, \n All Directions: {all_directions}, \n Visited: {visited}, \n Past Rooms: {past_rooms} \n ----------------------------------")
+        return next_direction
+            
+
+    # player.travel()
+    # player.travel()
+    # random_dir(player.current_room.id)
 
     while r < 17:
         r += 1 # Temporary to keep from having tons of loops
+        direction_to_travel_in = random_dir(player.current_room.id)
+        traversal_path.append(direction_to_travel_in)
+        # Exploring the room (I think I still need this!)
+        explore_room(player.current_room, direction_to_travel_in)
+        player.travel(direction_to_travel_in)
+        # Traverse until we hit a dead-end or the beginning of a loop
 
-        # Calls explore_room with the curent room and the direction the player is facing
-        explore_room(player.current_room, direction_facing) 
-
-        # Updates the direction the player is facing to be the last travel_direction used
-        if len(traversal_path) > 0:
-            direction_facing = traversal_path[-1]
-
-        # Sets travel directions depending on the direction facing
-        if direction_facing == "s":
-            travel_directions.update({"left_path": "e", "forward_path": "s", "right_path": "w", "back_path": "n"})
-
-        elif direction_facing == "n":
-            travel_directions.update({"left_path": "w", "forward_path": "n", "right_path": "e", "back_path": "s"})
-        
-        elif direction_facing == "e":
-            travel_directions.update({"left_path": "n", "forward_path": "e", "right_path": "s", "back_path": "w"})
-
-        else:
-            travel_directions.update({"left_path": "s", "forward_path": "w", "right_path": "n", "back_path": "e"})
+        # Traverse backwards until player gets to a room with unexplored exits 
 
 
-        # Actual Traversal Instructions
-        # If the left and forward paths are not in the room, then travel in the "right" path
-        if (travel_directions.get("left_path") not in player.current_room.get_exits()) and (travel_directions.get("forward_path") not in player.current_room.get_exits()):
-            right_path = travel_directions.get("right_path")
-            player.travel(right_path)
-            traversal_path.append(right_path)
-            backtracking_path[last_unknown].append(right_path)
-        # If the left and right paths are not in the room, then travel in the "forward" path
-        elif (travel_directions.get("left_path") not in player.current_room.get_exits()) and (travel_directions.get("right_path") not in player.current_room.get_exits()):
-            forward_path = travel_directions.get("forward_path")
-            player.travel(forward_path)
-            traversal_path.append(forward_path)
-            backtracking_path[last_unknown].append(forward_path)
-        # otherwise, take the left path
-        else:
-            left_path = travel_directions.get("left_path")
-            player.travel(left_path)
-            traversal_path.append(left_path) 
-            backtracking_path[last_unknown].append(left_path)
-
-
-        # If there are 2 exits in the room, append the direction and create a new list at this room
-        if len(player.current_room.get_exits()) == 2:
-            backtracking_path[last_unknown].append(direction_facing)
-            backtracking_path[player.current_room.id] = list()
-            backtracking_path[player.current_room.id].append(player.current_room.id)
-
-
-        # If we have gotten back to a last unknown with a backtracking length greater than 1, we have hit a "loop", so we need to backtrack to the first room
-        if  (player.current_room.id == last_unknown) and (len(backtracking_path) > 1):
-            next_dir = backtracking_path[last_unknown].pop()
-            if next_dir == "n":
-                player.travel("s")
-            if next_dir == "s":
-               player.travel("n")
-            if next_dir == "e":
-                player.travel("w")
-            if next_dir == "w":
-                player.travel("e")
-
-        # If the player hits a dead-end, they backtrack to the last unknown room and continue from there
-        if len(player.current_room.get_exits()) == 1:
-            next_dir = backtracking_path[last_unknown].pop()
-            if next_dir == "n":
-                player.travel("s")
-            if next_dir == "s":
-                player.travel("n")
-            if next_dir == "e":
-                player.travel("w")
-            if next_dir == "w":
-                player.travel("e")
-            if next_dir == last_unknown:
-                player.travel("e")
-        
-        # Prints the room description
-        player.current_room.print_room_description(player)
 
 
 # Invokes the "traversing" method
