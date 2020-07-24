@@ -35,42 +35,28 @@ player = Player(world.starting_room)
 # path the test will take
 traversal_path = []
 
-room = player.current_room
+# room = player.current_room
 
 # dictionary of each visited room. Each entry has values for n,s,e,w
 # visited = {0: {'w': '?', 'n': '?', 'e': '?', 's': '?'}}
 visited = {}
 un_visited_directions = []
-
-# def pick_random_unexplored_direction(r):
-#     # print(room, 'from inside random picker')
-#     # player.current_room.print_room_description(player)
-#     all_directions = r.get_exits()
-#     unexplored = []
-#     for d in all_directions:
-#         checking_if_unexplored = visited[r.id].get(d)
-#         if checking_if_unexplored == "?":
-#             unexplored.append(d)
-#     random.shuffle(unexplored)
-#     next_direction = unexplored[0]
-#     new_room = player.travel(next_direction)
-#     # print(new_room, 'a;sodfij;aoijdf')
-#     # dft(new_room)
-#     # return next_direction
-
-# pick_random_unexplored_direction(room)
-# player.travel(pick_random_unexplored_direction(room))
+past_rooms = []
 
 # Gets exits for the room and creates a dict entry in "visited" for it
-def get_neighboring_rooms(r):
+def get_neighboring_rooms(r, unvisited):
+    # print(f"FROM NEIGBOR METHOD ---> \n Traveled Directions: {unvisited}, \n Current Room: {r.id}, \n Past Rooms: {past_rooms}, \n Visited: {visited}, \n ---------------------------------")
+
     exits = r.get_exits()
 
     visited[r.id] = {}
 
+    past_rooms.append(r.id)
+
     for e in exits:
         visited[r.id].update({e: "?"})
         if visited[r.id].get(e) == "?":
-            un_visited_directions.append(e)
+            unvisited.append(e)
 
     if "n" not in exits:
         visited[r.id].update({"n": None})
@@ -81,6 +67,16 @@ def get_neighboring_rooms(r):
     if "w" not in exits:
         visited[r.id].update({"w": None})
     # else: 
+    opposites = {"n": "s", 
+                "e": "w", 
+                "s": "n", 
+                "w": "e"
+                }
+    if len(past_rooms) > 1:
+    #     visited[r.id].update({unvisited[-1]: past_rooms[-1]})
+        visited[r.id].update({"w": past_rooms[-2]})
+
+
     return exits
 
 
@@ -91,27 +87,55 @@ def get_neighboring_rooms(r):
 # get_neighboring_rooms(player.current_room)
 
 def dft(room, unvisited):
-    print(room.id)
-    possible_directions = get_neighboring_rooms(room)
-    print(un_visited_directions, 'hello')
+    print(f"FROM DFT ------> \n Traveled Directions: {un_visited_directions}, \n Current Room: {room.id}, \n Past Rooms: {past_rooms}, \n Visited: {visited}, \n ---------------------------------")
+    possible_directions = get_neighboring_rooms(room, un_visited_directions)
     random.shuffle(possible_directions)
     new_direction = un_visited_directions.pop()
     player.travel(new_direction)
     traversal_path.append(new_direction)
+    if len(past_rooms) > 0:
+        visited[past_rooms[-1]].update({new_direction: player.current_room.id})
+        print(player.current_room.id, past_rooms)
+    # dft()
+    if len(room.get_exits()) == 1:
+        go_back(room, unvisited)
 
-def go_back(room):
-    opposites = {"n": "s", 
-                "e": "w", 
-                "s": "n", 
-                "w": "e"
-                }
+
+def go_back(room, unvisited):
+    # pass
     # While the current room doesn't have a "?", continue travelling in the popped off value of the "un_visited_directions" list
-            
+    # player.travel(un_visited_directions.pop())
+    cont = True
+    while cont is True:
+        for d in room.get_exits():
+            if visited[room.id].get(d) == "?":
+                cont = False
+                print(';aosidjf;oiejao;sijdfo;jieo;fa')
+            else:
+                print(unvisited, 'wuuuuuuuuuut?')
+                next_backtracking_room = unvisited.pop()
+                player.travel(next_backtracking_room)
+                go_back(player.current_room, unvisited)
 r = 0
 
 while r < 14:
     dft(player.current_room, un_visited_directions)   
+
+
+
+    # for d in player.current_room.get_exits():
+    #     print(d)
+    #     to_continue_or_not = []
+    #     if visited[player.current_room.id].get(d) == "?":
+    #         to_continue_or_not.append(d)
+
+    #         if len(to_continue_or_not) == 0:
+    #             print('uhhhhhhhhh')
     r += 1 
+    # if len(past_rooms) > 0:
+        # visited[r.id].update({})
+
+    print(player.current_room.id, 'in while loop')
 
 print(visited)
 player.current_room.print_room_description(player)
