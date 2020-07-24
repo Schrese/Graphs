@@ -1,3 +1,19 @@
+import random
+from collections import deque
+
+# class Queue():
+#     def __init__(self):
+#         self.queue = []
+#     def enqueue(self, value):
+#         self.queue.append(value)
+#     def dequeue(self):
+#         if self.size() > 0:
+#             return self.queue.pop(0)
+#         else:
+#             return None
+#     def size(self):
+#         return len(self.queue)
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -45,8 +61,23 @@ class SocialGraph:
         # !!!! IMPLEMENT ME
 
         # Add users
+        # for i in range(num_users):
+        #     self.add_user(f"User {i}")
+        [self.add_user(f"User {i}") for i in range(num_users)]
 
         # Create friendships
+        possible_friendships = []
+        # for user_id in self.users: # O(n^2) loop. Can I make this better?
+        #     for friend_id in range(user_id + 1, self.last_id + 1):
+        #         possible_friendships.append((user_id, friend_id))
+        [[possible_friendships.append((user_id, friend_id)) for friend_id in range(user_id + 1, self.last_id + 1)] for user_id in self.users]
+
+        # Shuffle the users
+        random.shuffle(possible_friendships)
+
+        for i in range(num_users * avg_friendships //2):
+            friendship = possible_friendships[i]
+            self.add_friendship(friendship[0], friendship[1])
 
     def get_all_social_paths(self, user_id):
         """
@@ -59,7 +90,43 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+        # q = Queue()
+        # q.enqueue(self.friendships[user_id])
+        # print(self.friendships[user_id])
+        # visited[user_id] = [user_id]
+        # visited['hello'] = ['hi', 'there']
+        # print(visited, 'from here')
+        def bfs(starting_friend):
+            # q = Queue()
+            # q.enqueue([starting_friend])
+            q = deque()
+            q.append([starting_friend])
+                # been_there = set()
+
+            while len(q) > 0:
+                path = q.pop()
+                # print('original', path)
+                v = path[-1]
+                if v not in visited:
+                    # if v == ending_friend:
+                    #     return path
+                    # been_there.add(v)
+                    visited[v] = path
+                    
+                    for friend in self.get_friendos(v):
+                    # for friend in ending_friend:
+                        path_copy = list(path)
+                        path_copy.append(friend)
+                        q.append(path_copy)
+                        # print(friend, path, path_copy, 'hello')
+                        # print(friend, path, 'a;siodfj;oeiawjsdf')        
+                        # visited[friend] = path
+        bfs(user_id)
+
         return visited
+
+    def get_friendos(self, user_id):
+        return self.friendships[user_id]
 
 
 if __name__ == '__main__':

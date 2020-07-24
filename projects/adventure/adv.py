@@ -2,8 +2,9 @@ from room import Room
 from player import Player
 from world import World
 
-import random
 from ast import literal_eval
+import random
+from collections import deque
 
 # Load world
 world = World()
@@ -12,9 +13,9 @@ world = World()
 # You may uncomment the smaller graphs for development and testing purposes.
 # map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
-# map_file = "maps/test_loop.txt"
+map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-map_file = "maps/main_maze.txt"
+# map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -27,7 +28,113 @@ player = Player(world.starting_room)
 
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
+# This is the path for test_cross map
+# traversal_path = ["n", "n", "s", "s", "w", "w", "e", "e", "s", "s", "n", "n", "e", "e"]
+
+
+# path the test will take
 traversal_path = []
+
+# room = player.current_room
+
+# dictionary of each visited room. Each entry has values for n,s,e,w
+# visited = {0: {'w': '?', 'n': '?', 'e': '?', 's': '?'}}
+visited = {}
+un_visited_directions = []
+past_rooms = []
+
+# Gets exits for the room and creates a dict entry in "visited" for it
+def get_neighboring_rooms(r, unvisited):
+    # print(f"FROM NEIGBOR METHOD ---> \n Traveled Directions: {unvisited}, \n Current Room: {r.id}, \n Past Rooms: {past_rooms}, \n Visited: {visited}, \n ---------------------------------")
+
+    exits = r.get_exits()
+
+    visited[r.id] = {}
+
+    past_rooms.append(r.id)
+
+
+    if "n" not in exits:
+        visited[r.id].update({"n": None})
+    if "s" not in exits:
+        visited[r.id].update({"s": None})
+    if "e" not in exits:
+        visited[r.id].update({"e": None})
+    if "w" not in exits:
+        visited[r.id].update({"w": None})
+        
+    opposites = {"n": "s", 
+                "e": "w", 
+                "s": "n", 
+                "w": "e"
+                }
+
+    for e in exits:
+        visited[r.id].update({e: "?"})
+        if visited[r.id].get(e) == "?":
+            unvisited.append(e)
+
+    incoming_direction = un_visited_directions.pop()
+    if len(past_rooms) > 1 and visited[r.id].get(incoming_direction) == "?":
+        print(incoming_direction, past_rooms[-2], 'why not working?')
+        visited[r.id].update({incoming_direction: past_rooms[-2]})
+
+    return  exits
+
+
+
+
+def dfs(room, unvisited):
+    possible_directions = get_neighboring_rooms(room, un_visited_directions)
+    for d in possible_directions: 
+        if d != "?":
+            possible_directions.remove(d)
+    random.shuffle(possible_directions)
+    if len(room.get_exits()) == 1 or len(possible_directions) == 0:
+        get_neighboring_rooms(room, un_visited_directions)
+        go_back(room, unvisited)
+    # if len(possible_directions) == 0:
+
+    new_direction = possible_directions[-1]
+    un_visited_directions.append(new_direction)
+    # new_direction = un_visited_directions.pop()
+    player.travel(new_direction)
+    traversal_path.append(new_direction)
+    if len(past_rooms) > 0:
+        if visited[past_rooms[-1]].get(new_direction) == "?":
+            visited[past_rooms[-1]].update({new_direction: player.current_room.id})
+
+    print(f"FROM DFT ------> \n Possible Directions: {possible_directions}, \n New Direction: {new_direction}, \n Un_Visited Directions: {un_visited_directions}, \n Current Room: {room.id}, \n Past Rooms: {past_rooms}, \n Visited: {visited}, \n ---------------------------------")
+
+
+
+def go_back(room, unvisited):
+    # pass
+    # While the current room doesn't have a "?", continue travelling in the popped off value of the "un_visited_directions" list
+    cont = True
+    for d in player.current_room.get_exits():
+        if visited[room.id].get(d) == "?":
+            cont = False
+            print(room.id, ';aosidjf;oiejao;sijdfo;jieo;fa')
+            return dfs(player.current_room, unvisited)           
+        else: # Else is running multiple times (once for each "d")
+            next_backtracking_room = unvisited.pop()
+            player.travel(next_backtracking_room)
+            go_back(player.current_room, unvisited)
+r = 0
+
+while r < 12:
+    dfs(player.current_room, un_visited_directions)   
+    r += 1 
+    print(player.current_room.id, 'in while loop')
+
+print(visited, un_visited_directions)
+player.current_room.print_room_description(player)
+
+
+
+
+
 
 
 
@@ -51,12 +158,12 @@ else:
 #######
 # UNCOMMENT TO WALK AROUND
 #######
-player.current_room.print_room_description(player)
-while True:
-    cmds = input("-> ").lower().split(" ")
-    if cmds[0] in ["n", "s", "e", "w"]:
-        player.travel(cmds[0], True)
-    elif cmds[0] == "q":
-        break
-    else:
-        print("I did not understand that command.")
+# player.current_room.print_room_description(player)
+# while True:
+#     cmds = input("-> ").lower().split(" ")
+#     if cmds[0] in ["n", "s", "e", "w"]:
+#         player.travel(cmds[0], True)
+#     elif cmds[0] == "q":
+#         break
+#     else:
+#         print("I did not understand that command.")

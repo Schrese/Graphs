@@ -3,6 +3,19 @@
 This is a multi-stage project to implement a basic graph class and traversals.
 
 
+# Checklist
+[x] add_vertex()
+[x] add_edge()
+[x] get_neighbors()
+[x] bft()
+[x] dft()
+[x] dft_recursive()
+[x] bfs()
+[x] dfs()
+[x] dfs_recursive()
+
+
+
 ## Part 1: Graph Class
 
 In the file `graph.py`, implement a `Graph` class that supports the API in the example below. In particular, this means there should be a field `vertices` that
