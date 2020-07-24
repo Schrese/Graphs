@@ -86,8 +86,8 @@ def get_neighboring_rooms(r, unvisited):
 # player.travel("s")
 # get_neighboring_rooms(player.current_room)
 
-def dft(room, unvisited):
-    print(f"FROM DFT ------> \n Traveled Directions: {un_visited_directions}, \n Current Room: {room.id}, \n Past Rooms: {past_rooms}, \n Visited: {visited}, \n ---------------------------------")
+def dfs(room, unvisited):
+    # print(f"FROM DFT ------> \n Traveled Directions: {un_visited_directions}, \n Current Room: {room.id}, \n Past Rooms: {past_rooms}, \n Visited: {visited}, \n ---------------------------------")
     possible_directions = get_neighboring_rooms(room, un_visited_directions)
     random.shuffle(possible_directions)
     new_direction = un_visited_directions.pop()
@@ -95,9 +95,10 @@ def dft(room, unvisited):
     traversal_path.append(new_direction)
     if len(past_rooms) > 0:
         visited[past_rooms[-1]].update({new_direction: player.current_room.id})
-        print(player.current_room.id, past_rooms)
+        # print(player.current_room.id, past_rooms)
     # dft()
     if len(room.get_exits()) == 1:
+        get_neighboring_rooms(room, un_visited_directions)
         go_back(room, unvisited)
 
 
@@ -106,35 +107,20 @@ def go_back(room, unvisited):
     # While the current room doesn't have a "?", continue travelling in the popped off value of the "un_visited_directions" list
     # player.travel(un_visited_directions.pop())
     cont = True
-    while cont is True:
-        for d in room.get_exits():
-            if visited[room.id].get(d) == "?":
-                cont = False
-                print(';aosidjf;oiejao;sijdfo;jieo;fa')
-            else:
-                print(unvisited, 'wuuuuuuuuuut?')
-                next_backtracking_room = unvisited.pop()
-                player.travel(next_backtracking_room)
-                go_back(player.current_room, unvisited)
+    for d in player.current_room.get_exits():
+        if visited[room.id].get(d) == "?":
+            cont = False
+            print(room.id, ';aosidjf;oiejao;sijdfo;jieo;fa')
+            return dfs(player.current_room, unvisited)           
+        else:
+            next_backtracking_room = unvisited.pop()
+            player.travel(next_backtracking_room)
+            go_back(player.current_room, unvisited)
 r = 0
 
-while r < 14:
-    dft(player.current_room, un_visited_directions)   
-
-
-
-    # for d in player.current_room.get_exits():
-    #     print(d)
-    #     to_continue_or_not = []
-    #     if visited[player.current_room.id].get(d) == "?":
-    #         to_continue_or_not.append(d)
-
-    #         if len(to_continue_or_not) == 0:
-    #             print('uhhhhhhhhh')
+while r < 5:
+    dfs(player.current_room, un_visited_directions)   
     r += 1 
-    # if len(past_rooms) > 0:
-        # visited[r.id].update({})
-
     print(player.current_room.id, 'in while loop')
 
 print(visited)
