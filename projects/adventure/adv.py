@@ -62,6 +62,7 @@ def get_neighboring_rooms(r, unvisited):
         visited[r.id].update({"e": None})
     if "w" not in exits:
         visited[r.id].update({"w": None})
+        
     opposites = {"n": "s", 
                 "e": "w", 
                 "s": "n", 
@@ -89,21 +90,21 @@ def dfs(room, unvisited):
         if d != "?":
             possible_directions.remove(d)
     random.shuffle(possible_directions)
-    if len(room.get_exits()) == 1:
+    if len(room.get_exits()) == 1 or len(possible_directions) == 0:
         get_neighboring_rooms(room, un_visited_directions)
-    if len(possible_directions) == 0:
         go_back(room, unvisited)
+    # if len(possible_directions) == 0:
 
     new_direction = possible_directions[-1]
     un_visited_directions.append(new_direction)
     # new_direction = un_visited_directions.pop()
-    print(f"FROM DFT ------> \n Possible Directions: {possible_directions}, \n New Direction: {new_direction}, \n Traveled Directions: {un_visited_directions}, \n Current Room: {room.id}, \n Past Rooms: {past_rooms}, \n Visited: {visited}, \n ---------------------------------")
     player.travel(new_direction)
     traversal_path.append(new_direction)
     if len(past_rooms) > 0:
         if visited[past_rooms[-1]].get(new_direction) == "?":
             visited[past_rooms[-1]].update({new_direction: player.current_room.id})
 
+    print(f"FROM DFT ------> \n Possible Directions: {possible_directions}, \n New Direction: {new_direction}, \n Un_Visited Directions: {un_visited_directions}, \n Current Room: {room.id}, \n Past Rooms: {past_rooms}, \n Visited: {visited}, \n ---------------------------------")
 
 
 
@@ -116,7 +117,7 @@ def go_back(room, unvisited):
             cont = False
             print(room.id, ';aosidjf;oiejao;sijdfo;jieo;fa')
             return dfs(player.current_room, unvisited)           
-        else:
+        else: # Else is running multiple times (once for each "d")
             next_backtracking_room = unvisited.pop()
             player.travel(next_backtracking_room)
             go_back(player.current_room, unvisited)
@@ -127,7 +128,7 @@ while r < 12:
     r += 1 
     print(player.current_room.id, 'in while loop')
 
-print(visited)
+print(visited, un_visited_directions)
 player.current_room.print_room_description(player)
 
 
