@@ -53,10 +53,8 @@ def get_neighboring_rooms(r, unvisited):
 
     past_rooms.append(r.id)
 
-    for e in exits:
-        visited[r.id].update({e: "?"})
-        if visited[r.id].get(e) == "?":
-            unvisited.append(e)
+    # unseen_room_directions = []
+
 
     if "n" not in exits:
         visited[r.id].update({"n": None})
@@ -72,12 +70,21 @@ def get_neighboring_rooms(r, unvisited):
                 "s": "n", 
                 "w": "e"
                 }
+
+    for e in exits:
+        visited[r.id].update({e: "?"})
+        if visited[r.id].get(e) == "?":
+            unvisited.append(e)
+            # unseen_room_directions.append(e)
+
     if len(past_rooms) > 1:
     #     visited[r.id].update({unvisited[-1]: past_rooms[-1]})
-        visited[r.id].update({"w": past_rooms[-2]})
+        incoming_direction = un_visited_directions.pop()
+        print(incoming_direction, past_rooms[-2], 'why not working?')
+        visited[r.id].update({opposites.get(incoming_direction): past_rooms[-2]})
 
-
-    return exits
+    # print(unseen_room_directions, 'this should be decreasing')
+    return  exits
 
 
 # get_neighboring_rooms(player.current_room)
@@ -87,19 +94,26 @@ def get_neighboring_rooms(r, unvisited):
 # get_neighboring_rooms(player.current_room)
 
 def dfs(room, unvisited):
-    # print(f"FROM DFT ------> \n Traveled Directions: {un_visited_directions}, \n Current Room: {room.id}, \n Past Rooms: {past_rooms}, \n Visited: {visited}, \n ---------------------------------")
     possible_directions = get_neighboring_rooms(room, un_visited_directions)
+    for d in possible_directions: 
+        if d != "?":
+            possible_directions.remove(d)
     random.shuffle(possible_directions)
-    new_direction = un_visited_directions.pop()
+    if len(room.get_exits()) == 1 or len(possible_directions) == 0:
+        get_neighboring_rooms(room, un_visited_directions)
+        go_back(room, unvisited)
+    new_direction = possible_directions[-1]
+    un_visited_directions.append(new_direction)
+    # new_direction = un_visited_directions.pop()
+    print(f"FROM DFT ------> \n Possible Directions: {possible_directions}, \n New Direction: {new_direction}, \n Traveled Directions: {un_visited_directions}, \n Current Room: {room.id}, \n Past Rooms: {past_rooms}, \n Visited: {visited}, \n ---------------------------------")
     player.travel(new_direction)
     traversal_path.append(new_direction)
     if len(past_rooms) > 0:
-        visited[past_rooms[-1]].update({new_direction: player.current_room.id})
+        if visited[past_rooms[-1]].get(new_direction) == "?":
+            visited[past_rooms[-1]].update({new_direction: player.current_room.id})
         # print(player.current_room.id, past_rooms)
     # dft()
-    if len(room.get_exits()) == 1:
-        get_neighboring_rooms(room, un_visited_directions)
-        go_back(room, unvisited)
+
 
 
 def go_back(room, unvisited):
